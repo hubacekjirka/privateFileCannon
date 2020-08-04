@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Index page{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <img style="max-width: 600px;" src="{{ url_for('static', filename='img/cannon.jpg') }}" alt="">
+            <h1>Some Index</h1>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
