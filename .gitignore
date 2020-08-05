@@ -1,7 +1,5 @@
 config.py
 .vscode
-*.jpg
-*.jpeg
 imagenet
 chatIds.json
 chatIds_baseline.json
