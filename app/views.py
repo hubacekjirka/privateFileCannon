@@ -3,10 +3,6 @@ from flask import render_template
 
 @app.route('/', methods=["GET", "POST"])
 def home():
-    return render_template('index.html')
-
-@app.route('/upload', methods=["GET", "POST"])
-def upload():
     return render_template('upload.html')
 
 @app.route("/about")
