@@ -3,14 +3,17 @@ from flask import render_template, request, redirect
 import os
 
 #TBD: put into config,py
-app.config["fileStoragePath"] = ""
+
+currentDir = os.path.dirname(os.path.realpath(__file__))
+app.config["fileStoragePath"] = os.path.join(currentDir,"fileStorage",)
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
         if request.files:
             file = request.files["file"]
-            file.save(app.config["fileStoragePath"], file.filename)
+            file.save(os.path.join(app.config["fileStoragePath"], file.filename))
             return redirect(request.url)
     return render_template("upload.html")
 
