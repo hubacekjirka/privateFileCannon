@@ -1,10 +1,10 @@
 from app import app
-from flask import render_template, request, redirect, send_from_directory, abort
+from flask import render_template, request, redirect, send_from_directory, abort, flash
 from werkzeug.utils import secure_filename
 import os
 
 #TBD: put into config,py
-
+app.secret_key = "super secret key"
 currentDir = os.path.dirname(os.path.realpath(__file__))
 app.config["file_storage_path"] = os.path.join(currentDir,"fileStorage")
 app.config["max_file_size"] = 100 * 1024 * 1024
@@ -35,7 +35,10 @@ def home():
             file_name = secure_filename(file.filename)
 
             file.save(os.path.join(app.config["file_storage_path"], file_name))
-            return redirect(request.url)
+            flash(f"File uploaded. Link to the file: {request.url_root + 'get_file/' + file_name}" , "info")
+            flash(f"To delete the file: {request.url_root + 'remove_file/' + file_name}" , "info")
+            return redirect(request.url_root)
+
     return render_template("upload.html")
 
 @app.route("/about")
@@ -47,7 +50,7 @@ def about():
 #def download(guid):
 #    return f"<h1>Get file: {guid}</h1>"
 
-@app.route("/get-file/<string:file_name>")
+@app.route("/get_file/<string:file_name>")
 def get_file(file_name):
     print(file_name)
 
@@ -58,7 +61,7 @@ def get_file(file_name):
 
     return(file_name)
 
-@app.route("/remove-file/<string:file_name>")
+@app.route("/remove_file/<string:file_name>")
 def remove_file(file_name):
     try:
         os.remove(os.path.join(app.config["file_storage_path"], file_name))
