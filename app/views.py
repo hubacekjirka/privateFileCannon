@@ -13,26 +13,27 @@ def allowed_image_filesize(file_size):
 def home():
     print(app.config)
     if request.method == "POST":
-        print(request.cookies)
-        if request.files:
+
+        # Check if there's any file coming through the form
+        if not request.files["file"].filename == "":
+            
+            # Check file size against app settings, abort storing the file if the max size is exceeded
             if not allowed_image_filesize(request.cookies.get("fileSize")):
-                #TODO: do flash message
-                print(f"File exceeded maximum size of {app.config['MAX_FILE_SIZE'] / 1024 / 1024}MB")
+                flash(f"File exceeded maximum size of {app.config['MAX_FILE_SIZE'] / 1024 / 1024:.0f} MB", "error")
                 return redirect(request.url)
 
             file = request.files["file"]
-
-            if file.filename == "":
-                #TODO: change to flash message
-                print("Image must have a filename")
-                return redirect(request.url)
-
             file_name = secure_filename(file.filename)
 
             file.save(os.path.join(app.config["FILE_STORAGE_PATH"], file_name))
             flash(f"File uploaded. Link to the file: {request.url_root + 'get_file/' + file_name}" , "info")
             flash(f"To delete the file: {request.url_root + 'remove_file/' + file_name}" , "info")
             return redirect(request.url_root)
+
+        # No file submitted by user
+        else:
+            flash(f"No ammunition provided, sorry ...", "error")
+            return redirect(request.url)
 
     return render_template("upload.html")
 
