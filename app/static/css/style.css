@@ -1,3 +1,21 @@
+/* Colour palette: https://coolors.co/f3de8a-353a3f-eb9486-f9f8f8-75b9be */
+
 body {
-    background-color: #f1f1f1;
+    background-color: #F9F8F8;
+    text-align: justify;
+}
+
+blockquote {
+    border: 1px solid #EB9486;
+    border-left: 5px solid #EB9486;
+    border-radius: 1px;
+    background: #fafafa;
+    margin: 0px;
+    padding: 10px 10px;
+}
+
+blockquote .small {
+    display: block;
+    font-size: 80%;
+    text-align: right;
 }
