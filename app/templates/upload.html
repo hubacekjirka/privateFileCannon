@@ -3,12 +3,22 @@
 {% set active_page = "home" %}
 {% block main %} 
 
-{% with messages = get_flashed_messages() %} 
+{% with messages = get_flashed_messages(with_categories=true) %} 
     {% if messages %} 
-        {% for msg in messages %}
-            <div class="alert alert-success" role="alert">
-                {{ msg }}
-            </div>
+        {% for category, msg in messages %}
+
+            {% if category == "info" %}
+                <div class="alert alert-success" role="alert">
+                    {{ msg }}
+                </div>
+            {% endif %}
+
+            {% if category == "error" %}
+                <div class="alert alert-danger" role="alert">
+                    {{ msg }}
+                </div>
+            {% endif %}
+
         {% endfor %} 
     {% endif %} 
 {% endwith %}
