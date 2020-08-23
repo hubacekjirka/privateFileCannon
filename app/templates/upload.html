@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Private File Cannon{% endblock %} 
 {% set active_page = "home" %}
+
+{% block head %}
+<style type="text/css">
+    .jumbotron{
+        background-image: url("{{ url_for('static', filename='img/bertha.jpg') }}");
+        background-size: cover;
+        color: white;
+        padding-top: 290px;
+        height: 600px;
+    }
+</style>
+{% endblock head %}
+
 {% block main %} 
 
 {% with messages = get_flashed_messages(with_categories=true) %} 
@@ -23,16 +36,40 @@
     {% endif %} 
 {% endwith %}
 
-<div class="container">
-    <div class="row">
 
-        <div class="column">
-            <img style="max-width: 100%;" src="{{ url_for('static', filename='img/bertha.jpg') }}"
-                title="Big Bertha, source: https://www.pinterest.co.uk/pin/392235448765895540/">
-            <hr>
+
+<div class="container">
+    <div class="jumbotron">
+        <div class="mb-3 mt-3">
+
+            <h2 class="mb-3" style="font-weight: 300">Load Cannon</h2>
+
+            <div class="form-group mb-3">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="file_input" oninput="input_filename();">
+                    <label for="file_input" id="file_input_label" class="custom-file-label">Select File</label>
+                </div>
+            </div>
+
+            <button onclick="upload('{{ request.url }}')" id="upload_btn" class="btn btn-primary">Upload</button>
+            
+            <button class="btn btn-primary d-none" id="loading_btn" type="button" disabled>  
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Uploading...
+            </button>
+
+            <button class="btn btn-secondary d-none" id="cancel_btn" type="button">Cancel Upload</button>
         </div>
 
-    </div>
+        <div id="progress_wrapper" class="d-none">
+            <label id="progress_status">50% uploaded</label>
+            <div class="progress mb-3">
+                <div id="progress" class="progress-bar" role="progressbar" aria-valuenow="25" area-valuemin="0" area-valuemax="100"></div>
+            </div>
+        </div>
+
+        <div id="alert_wrapper"></div>
+      </div>
 
     <div class="row">
         <div class="col">
@@ -68,35 +105,7 @@
             </p>
             <hr>
 
-            <div class="mb-3 mt-3">
-
-                <h2 class="mb-3" style="font-weight: 300">Load Cannon</h2>
-
-                <div class="form-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="file_input" oninput="input_filename();">
-                        <label for="file_input" id="file_input_label" class="custom-file-label">Select File</label>
-                    </div>
-                </div>
-
-                <button onclick="upload('{{ request.url }}')" id="upload_btn" class="btn btn-primary">Upload</button>
-                
-                <button class="btn btn-primary d-none" id="loading_btn" type="button" disabled>  
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Uploading...
-                </button>
-
-                <button class="btn btn-secondary d-none" id="cancel_btn" type="button">Cancel Upload</button>
-            </div>
-
-            <div id="progress_wrapper" class="d-none">
-                <label id="progress_status">50% uploaded</label>
-                <div class="progress mb-3">
-                    <div id="progress" class="progress-bar" role="progressbar" aria-valuenow="25" area-valuemin="0" area-valuemax="100"></div>
-                </div>
-            </div>
-
-            <div id="alert_wrapper"></div>
+           
 
             
         </div>
@@ -172,7 +181,10 @@
     
         request.addEventListener("load", function(e) {
             if (request.status == 200) {
-                show_alert(`${request.response.message}`, "success");
+                show_alert(`Download link: ${request.response.get_link} <br> Remove link: ${request.response.remove_link}`, "success");
+            }
+            else if (request.status == 413) {
+                show_alert(`${request.response.message}`, "danger");
             }
             else {
                 show_alert(`Error uploading file`, "danger")
@@ -203,7 +215,7 @@
         upload_btn.classList.remove("d-none");
         progress_wrapper.classList.add("d-none");
         progress.setAttribute("style", "width: 0%");
-        file_input_label.innerText = "Select file";
+        file_input_label.innerText = "Select File";
     }
 
 </script>

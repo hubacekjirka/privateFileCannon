@@ -20,6 +20,7 @@
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
     <title>{% block title %}{% endblock %}</title>
+    {% block head %}{% endblock %}
   </head>
   <body>
     {% set navigation_bar = [

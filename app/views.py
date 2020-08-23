@@ -3,37 +3,35 @@ from flask import render_template, request, redirect, send_from_directory, abort
 from werkzeug.utils import secure_filename
 import os
 
-def allowed_image_filesize(file_size):
-    if int(file_size) <= app.config["MAX_FILE_SIZE"]:
-        return True
-
-    return False
+# Catch 413 error raised when the uploaded file exceeds limit defined in the 
+# environment variable
+@app.errorhandler(413)
+def file_size_exceeded(e):
+    res = make_response(jsonify({
+                "message": f"The file has exceeded maximum allowed size",
+                }), 413)
+    return res
 
 @app.route("/", methods=["GET", "POST"])
 def home():
     print(app.config)
     if request.method == "POST":
 
-
         # Check if there's any file coming through the form
         if not request.files["file"].filename == "":
             
-            # Check file size against app settings, abort storing the file if the max size is exceeded
-            # if not allowed_image_filesize(request.cookies.get("fileSize")):
-            #     flash(f"File exceeded maximum size of {app.config['MAX_FILE_SIZE'] / 1024 / 1024:.0f} MB", "error")
-            #     return redirect(request.url)
-
             file = request.files["file"]
             file_name = secure_filename(file.filename)
+            file.save(os.path.join(app.config["FILE_STORAGE_PATH"], file_name))
 
-            res = make_response(jsonify({"message": f"{file_name} uploaded"}), 200)
+            res = make_response(jsonify({
+                "message": f"{file_name} uploaded",
+                "get_link": f"{request.url_root + 'get_file/' + file_name}",
+                "remove_link": f"{request.url_root + 'remove_file/' + file_name}"
+                }), 200)
             return res
-            # file.save(os.path.join(app.config["FILE_STORAGE_PATH"], file_name))
-            # flash(f"File uploaded. Link to the file: {request.url_root + 'get_file/' + file_name}" , "info")
-            # flash(f"To delete the file: {request.url_root + 'remove_file/' + file_name}" , "info")
-            # return redirect(request.url_root)
 
-        # No file submitted by user
+        # No file submitted by user - shouldn't happen, safety net on backend
         else:
             flash(f"No ammunition provided, sorry ...", "error")
             return redirect(request.url)
