@@ -17,6 +17,12 @@ def home():
     print(app.config)
     if request.method == "POST":
 
+        if (not request.form["upload_password"] == app.config["UPLOAD_PASSWORD"]):
+            res = make_response(jsonify({
+                "message": f"Invalid password",
+                }), 403)
+            return res
+
         # Check if there's any file coming through the form
         if not request.files["file"].filename == "":
             

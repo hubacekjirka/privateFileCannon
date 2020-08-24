@@ -109,3 +109,8 @@ venv.bak/
 .mypy_cache/
 
 .DS_Store
+
+# exclude everything in fileStorage
+app/fileStorage/*
+# exception to the rule
+!app/fileStorage/.gitkeep 
