@@ -20,3 +20,12 @@ blockquote .small {
     font-size: 80%;
     text-align: right;
 }
+
+.jumbotron-content-wrapper {
+    padding: 10px;
+}
+
+.about-text{
+    background: rgba(53, 58, 63, 0.2); 
+    font-weight: 500;
+}
